@@ -49,6 +49,12 @@ export class RoleService {
 		try {
 			const role = await this.prisma.role.findUnique({
 				where: {id},
+				select: {
+					id: true,
+					name: true,
+					createdAt: true,
+					updatedAt: true,
+				}
 			});
 
 			if (!role) {
@@ -74,7 +80,7 @@ export class RoleService {
 			return await this.prisma.role.update({
 				where: {id},
 				data: {
-					name: data.name,
+					...data,
 					updatedAt: new Date(),
 				},
 			});
