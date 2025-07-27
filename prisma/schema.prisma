@@ -31,6 +31,8 @@ model Role {
   name            String           @unique
   users           User[]
   rolePermissions RolePermission[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 }
 
 model Permission {
@@ -39,6 +41,8 @@ model Permission {
   description     String?
   rolePermissions RolePermission[]
   userPermissions UserPermission[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 }
 
 model RolePermission {
@@ -47,6 +51,8 @@ model RolePermission {
 
   role       Role       @relation(fields: [roleId], references: [id])
   permission Permission @relation(fields: [permissionId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 
   @@id([roleId, permissionId])
 }
@@ -57,6 +63,8 @@ model UserPermission {
 
   user       User       @relation(fields: [userId], references: [id])
   permission Permission @relation(fields: [permissionId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 
   @@id([userId, permissionId])
 }
