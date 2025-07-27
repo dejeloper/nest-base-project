@@ -3,10 +3,10 @@ import {Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuar
 import {UserService} from './user.service';
 import {CreateUserDto} from './dto/create-user.dto';
 import {UpdateUserDto} from './dto/update-user.dto';
-import {JwtAuthGuard} from 'src/auth/jwt/jwt-auth.guard';
+import {JwtAuthGuard} from '@/auth/jwt/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
-@Controller('user')
+@Controller('core/user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
