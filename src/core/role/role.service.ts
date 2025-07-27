@@ -26,7 +26,7 @@ export class RoleService {
 				},
 			});
 		} catch (error) {
-			throw new InternalServerErrorException(`Error al crear el rol: ${error.message}`);
+			throw new InternalServerErrorException(`Error al crear el rol`);
 		}
 	}
 
@@ -41,7 +41,7 @@ export class RoleService {
 				},
 			});
 		} catch (error) {
-			throw new InternalServerErrorException(`Error al obtener roles: ${error.message}`);
+			throw new InternalServerErrorException(`Error al obtener roles`);
 		}
 	}
 
@@ -63,7 +63,7 @@ export class RoleService {
 
 			return role;
 		} catch (error) {
-			throw new InternalServerErrorException(`Error al obtener el rol: ${error.message}`);
+			throw new InternalServerErrorException(`Error al obtener el rol`);
 		}
 	}
 
@@ -85,7 +85,7 @@ export class RoleService {
 				},
 			});
 		} catch (error) {
-			throw new InternalServerErrorException(`Error al actualizar el rol: ${error.message}`);
+			throw new InternalServerErrorException(`Error al actualizar el rol`);
 		}
 	}
 
@@ -103,7 +103,7 @@ export class RoleService {
 				where: {id},
 			});
 		} catch (error) {
-			throw new InternalServerErrorException(`Error al eliminar el rol: ${error.message}`);
+			throw new InternalServerErrorException(`Error al eliminar el rol`);
 		}
 	}
 
@@ -131,7 +131,7 @@ export class RoleService {
 				skipDuplicates: true,
 			});
 		} catch (error) {
-			throw new InternalServerErrorException(`Error al asignar permisos al rol: ${error.message}`);
+			throw new InternalServerErrorException(`Error al asignar permisos al rol`);
 		}
 	}
 }

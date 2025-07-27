@@ -27,23 +27,18 @@ export class PermissionsService {
         },
       });
     } catch (error) {
-      throw new InternalServerErrorException(`Error al crear el permiso: ${error.message}`);
+      throw new InternalServerErrorException(`Error al crear el permiso`);
     }
   }
 
   async findAllPermissions() {
     try {
       return await this.prisma.permission.findMany({
-        select: {
-          id: true,
-          name: true,
-          description: true,
-          createdAt: true,
-          updatedAt: true,
-        },
+
+        orderBy: {createdAt: 'desc'},
       });
     } catch (error) {
-      throw new InternalServerErrorException(`Error al obtener permisos: ${error.message}`);
+      throw new InternalServerErrorException(`Error al obtener permisos`);
     }
   }
 
@@ -66,7 +61,7 @@ export class PermissionsService {
 
       return permission;
     } catch (error) {
-      throw new InternalServerErrorException(`Error al obtener el permiso: ${error.message}`);
+      throw new InternalServerErrorException(`Error al obtener el permiso`);
     }
   }
 
@@ -88,7 +83,7 @@ export class PermissionsService {
         },
       });
     } catch (error) {
-      throw new InternalServerErrorException(`Error al actualizar el permiso: ${error.message}`);
+      throw new InternalServerErrorException(`Error al actualizar el permiso`);
     }
   }
 
@@ -106,7 +101,7 @@ export class PermissionsService {
         where: {id},
       });
     } catch (error) {
-      throw new InternalServerErrorException(`Error al eliminar el permiso: ${error.message}`);
+      throw new InternalServerErrorException(`Error al eliminar el permiso`);
     }
   }
 }

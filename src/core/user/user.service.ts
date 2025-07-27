@@ -31,7 +31,7 @@ export class UserService {
         },
       });
     } catch (error) {
-      throw new InternalServerErrorException(`Error al crear el usuario: ${error.message}`);
+      throw new InternalServerErrorException(`Error al crear el usuario`);
     }
   }
 
@@ -152,7 +152,7 @@ export class UserService {
         skipDuplicates: true
       });
     } catch (error) {
-      throw new InternalServerErrorException(`Error al asignar permisos al usuario: ${error.message}`);
+      throw new InternalServerErrorException(`Error al asignar permisos al usuario`);
     }
   }
 
@@ -192,7 +192,7 @@ export class UserService {
 
       return Array.from(allPermissionsMap.values());
     } catch (error) {
-      throw new InternalServerErrorException(`Error al obtener permisos del usuario: ${error.message}`);
+      throw new InternalServerErrorException(`Error al obtener permisos del usuario`);
     }
   }
 }
