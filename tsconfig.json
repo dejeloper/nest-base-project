@@ -15,6 +15,7 @@
       "@/auth/*": ["src/core/auth/*"],
       "@/user/*": ["src/core/user/*"],
       "@/role/*": ["src/core/role/*"],
+      "@/permissions/*": ["src/core/permissions/*"],
       "@/app/*": ["src/app/*"]
     },
     "incremental": true,
