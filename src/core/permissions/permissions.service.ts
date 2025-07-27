@@ -47,10 +47,17 @@ export class PermissionsService {
     }
   }
 
-  async findOnePermission(id: number) {
+  async findPermissionById(id: number) {
     try {
       const permission = await this.prisma.permission.findUnique({
         where: {id},
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          createdAt: true,
+          updatedAt: true,
+        },
       });
 
       if (!permission) {
@@ -76,8 +83,7 @@ export class PermissionsService {
       return await this.prisma.permission.update({
         where: {id},
         data: {
-          name: data.name,
-          description: data.description,
+          ...data,
           updatedAt: new Date(),
         },
       });
@@ -86,7 +92,7 @@ export class PermissionsService {
     }
   }
 
-  async removePermission(id: number) {
+  async deletePermission(id: number) {
     try {
       const existingPermission = await this.prisma.permission.findUnique({
         where: {id},
@@ -103,5 +109,4 @@ export class PermissionsService {
       throw new InternalServerErrorException(`Error al eliminar el permiso: ${error.message}`);
     }
   }
-
 }

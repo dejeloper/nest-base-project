@@ -22,7 +22,7 @@ export class PermissionsController {
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.permissionsService.findOnePermission(id);
+    return this.permissionsService.findPermissionById(id);
   }
 
   @Patch(':id')
@@ -32,6 +32,6 @@ export class PermissionsController {
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
-    return this.permissionsService.removePermission(id);
+    return this.permissionsService.deletePermission(id);
   }
 }
