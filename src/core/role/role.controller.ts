@@ -5,6 +5,8 @@ import {CreateRoleDto} from './dto/create-role.dto';
 import {UpdateRoleDto} from './dto/update-role.dto';
 import {JwtAuthGuard} from '@/auth/jwt/jwt-auth.guard';
 
+import {AssignPermissionsDto} from '@/user/dto/assign-permissions.dto';
+
 @UseGuards(JwtAuthGuard)
 @Controller('core/role')
 export class RoleController {
@@ -33,5 +35,13 @@ export class RoleController {
 	@Delete(':id')
 	remove(@Param('id', ParseIntPipe) id: number) {
 		return this.roleService.deleteRole(id);
+	}
+
+	@Post(':id/permissions')
+	async assignPermissionsToRole(
+		@Param('id', ParseIntPipe) id: number,
+		@Body() dto: AssignPermissionsDto,
+	) {
+		return this.roleService.assignPermissionsToRole(id, dto.permissionIds);
 	}
 }

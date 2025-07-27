@@ -106,4 +106,32 @@ export class RoleService {
 			throw new InternalServerErrorException(`Error al eliminar el rol: ${error.message}`);
 		}
 	}
+
+	async assignPermissionsToRole(roleId: number, permissionIds: number[]) {
+		try {
+			const role = await this.prisma.role.findUnique({
+				where: {id: roleId},
+			});
+
+			if (!role) {
+				throw new NotFoundException('Rol no encontrado');
+			}
+
+			if (permissionIds.length !== new Set(permissionIds).size) {
+				throw new BadRequestException('Los IDs de permisos deben ser únicos');
+			}
+
+			const relations = permissionIds.map(permissionId => ({
+				roleId,
+				permissionId,
+			}));
+
+			return await this.prisma.rolePermission.createMany({
+				data: relations,
+				skipDuplicates: true,
+			});
+		} catch (error) {
+			throw new InternalServerErrorException(`Error al asignar permisos al rol: ${error.message}`);
+		}
+	}
 }

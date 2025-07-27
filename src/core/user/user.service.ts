@@ -121,4 +121,78 @@ export class UserService {
       throw new InternalServerErrorException('Error al eliminar usuario');
     }
   }
+
+  async assignPermissionToUser(userId: number, permissionId: number[]) {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: {id: userId},
+      });
+
+      if (!user) {
+        throw new NotFoundException('Usuario no encontrado');
+      }
+
+      const permissions = await this.prisma.permission.findMany({
+        where: {
+          id: {in: permissionId},
+        },
+      });
+
+      if (permissions.length !== new Set(permissionId).size) {
+        throw new BadRequestException('Algunos permisos no existen');
+      }
+
+      const relations = permissionId.map(permissionId => ({
+        userId,
+        permissionId,
+      }));
+
+      return await this.prisma.userPermission.createMany({
+        data: relations,
+        skipDuplicates: true
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(`Error al asignar permisos al usuario: ${error.message}`);
+    }
+  }
+
+  async getAllPermissionsByUserId(userId: number) {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: {id: userId},
+        include: {
+          role: {
+            include: {
+              rolePermissions: {
+                include: {
+                  permission: true
+                }
+              }
+            }
+          },
+          userPermissions: {
+            include: {
+              permission: true
+            }
+          }
+        }
+      });
+
+      if (!user) {
+        throw new NotFoundException('Usuario no encontrado');
+      }
+
+      const rolePermissions = user.role.rolePermissions.map((rp) => rp.permission);
+      const directPermissions = user.userPermissions.map((up) => up.permission);
+
+      const allPermissionsMap = new Map();
+      [...rolePermissions, ...directPermissions].forEach((perm) =>
+        allPermissionsMap.set(perm.id, perm),
+      );
+
+      return Array.from(allPermissionsMap.values());
+    } catch (error) {
+      throw new InternalServerErrorException(`Error al obtener permisos del usuario: ${error.message}`);
+    }
+  }
 }

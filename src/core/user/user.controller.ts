@@ -3,6 +3,8 @@ import {Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuar
 import {UserService} from './user.service';
 import {CreateUserDto} from './dto/create-user.dto';
 import {UpdateUserDto} from './dto/update-user.dto';
+import {AssignPermissionsDto} from './dto/assign-permissions.dto';
+
 import {JwtAuthGuard} from '@/auth/jwt/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
@@ -34,4 +36,13 @@ export class UserController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.userService.deleteUser(id);
   }
+
+  @Post(':id/permissions')
+  async assignPermissionsToUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: AssignPermissionsDto,
+  ) {
+    return this.userService.assignPermissionToUser(id, dto.permissionIds);
+  }
+
 }
