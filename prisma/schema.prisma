@@ -24,6 +24,8 @@ model User {
   userPermissions UserPermission[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+
+  @@map("user")
 }
 
 model Role {
@@ -33,6 +35,8 @@ model Role {
   rolePermissions RolePermission[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+
+  @@map("role")
 }
 
 model Permission {
@@ -43,6 +47,8 @@ model Permission {
   userPermissions UserPermission[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+
+  @@map("permission")
 }
 
 model RolePermission {
@@ -55,6 +61,7 @@ model RolePermission {
   updatedAt  DateTime   @updatedAt
 
   @@id([roleId, permissionId])
+  @@map("role_permission")
 }
 
 model UserPermission {
@@ -67,4 +74,5 @@ model UserPermission {
   updatedAt  DateTime   @updatedAt
 
   @@id([userId, permissionId])
+  @@map("user_permission")
 }
