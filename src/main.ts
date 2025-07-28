@@ -1,6 +1,7 @@
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app.module';
 import {ValidationPipe} from '@nestjs/common';
+import {Response} from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,8 +22,9 @@ async function bootstrap() {
     })
   );
 
-
-
+  app.getHttpAdapter().get('/', (req, res: Response) => {
+    res.redirect('/api');
+  });
 
   await app.listen(process.env.PORT ?? 3000);
 }
