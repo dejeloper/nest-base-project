@@ -14,25 +14,16 @@ export class UserScheduleService {
     });
 
     if (existingSchedule) {
-      return this.updateUserSchedule(existingSchedule.id, data);
+      throw new HttpException('El horario para este usuario ya está registrado', HttpStatus.BAD_REQUEST);
     }
 
-    if (data.dayOfWeek < 0 || data.dayOfWeek > 6) {
-      throw new HttpException('El día de la semana debe estar entre 0 y 6', HttpStatus.BAD_REQUEST);
-    }
-
-    const timeValidation = this.validateTimeSchedule(data.startTime, data.endTime);
-    console.log('Time validation:', timeValidation);
-    if (timeValidation) {
-      throw new HttpException(timeValidation, HttpStatus.BAD_REQUEST);
+    const validationError = this.validateScheduleInput(data);
+    if (validationError) {
+      throw new HttpException(validationError, HttpStatus.BAD_REQUEST);
     }
 
     return this.prisma.userSchedule.create({
-      data: {
-        ...data,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
+      data
     });
   }
 
@@ -83,7 +74,7 @@ export class UserScheduleService {
   }
 
   async updateUserSchedule(id: number, data: UpdateUserScheduleDto) {
-    const existingSchedule = await this.prisma.userSchedule.findFirst({
+    const existingSchedule = await this.prisma.userSchedule.findUnique({
       where: {id: id},
     });
 
@@ -91,24 +82,14 @@ export class UserScheduleService {
       throw new HttpException('No se encontró un horario existente para actualizar', HttpStatus.NOT_FOUND);
     }
 
-    if (data.dayOfWeek && (data.dayOfWeek < 0 || data.dayOfWeek > 6)) {
-      throw new HttpException('El día de la semana debe estar entre 0 y 6', HttpStatus.BAD_REQUEST);
-    }
-
-    if (data.startTime && data.endTime) {
-      const timeValidation = this.validateTimeSchedule(data.startTime, data.endTime);
-      console.log('Time validation:', timeValidation);
-      if (timeValidation) {
-        throw new HttpException(timeValidation, HttpStatus.BAD_REQUEST);
-      }
+    const validationError = this.validateScheduleInput(data, true);
+    if (validationError) {
+      throw new HttpException(validationError, HttpStatus.BAD_REQUEST);
     }
 
     return this.prisma.userSchedule.update({
       where: {id},
-      data: {
-        ...data,
-        updatedAt: new Date(),
-      },
+      data
     });
   }
 
@@ -127,10 +108,28 @@ export class UserScheduleService {
     await this.prisma.userSchedule.delete({
       where: {id},
     });
+
+    return {message: 'Horario eliminado correctamente'};
   }
 
+  private validateScheduleInput(data: CreateUserScheduleDto | UpdateUserScheduleDto, isUpdate = false): string | undefined {
+    if (!isUpdate && !data.userId) {
+      return 'El ID de usuario es obligatorio';
+    }
 
-  validateTimeSchedule(startTime: string, endTime: string): string | undefined {
+    if (data.dayOfWeek != null && (data.dayOfWeek < 0 || data.dayOfWeek > 6)) {
+      return 'El día de la semana debe estar entre 0 y 6';
+    }
+
+    if (data.startTime && data.endTime) {
+      const timeValidation = this.validateTimeSchedule(data.startTime, data.endTime);
+      if (timeValidation) {
+        return timeValidation;
+      }
+    }
+  }
+
+  private validateTimeSchedule(startTime: string, endTime: string): string | undefined {
     const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
     if (!timeRegex.test(startTime)) {

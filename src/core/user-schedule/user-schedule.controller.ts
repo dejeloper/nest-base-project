@@ -35,7 +35,7 @@ export class UserScheduleController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
+  @HttpCode(200)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.userScheduleService.removeSchedule(id);
   }
