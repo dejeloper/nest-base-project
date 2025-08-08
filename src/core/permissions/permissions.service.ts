@@ -1,4 +1,4 @@
-import {BadRequestException, Injectable, InternalServerErrorException, NotFoundException} from '@nestjs/common';
+import {BadRequestException, Injectable, InternalServerErrorException, NotFoundException, HttpException} from '@nestjs/common';
 import {PrismaService} from 'prisma/prisma.service';
 
 import {CreatePermissionDto} from './dto/create-permission.dto';
@@ -27,6 +27,9 @@ export class PermissionsService {
         },
       });
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException(`Error al crear el permiso`);
     }
   }
@@ -38,6 +41,9 @@ export class PermissionsService {
         orderBy: {createdAt: 'desc'},
       });
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException(`Error al obtener permisos`);
     }
   }
@@ -61,6 +67,9 @@ export class PermissionsService {
 
       return permission;
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException(`Error al obtener el permiso`);
     }
   }
@@ -83,6 +92,9 @@ export class PermissionsService {
         },
       });
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException(`Error al actualizar el permiso`);
     }
   }
@@ -101,7 +113,83 @@ export class PermissionsService {
         where: {id},
       });
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException(`Error al eliminar el permiso`);
+    }
+  }
+
+  async getAllPermissionsByUserId(userId: number) {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: {id: userId},
+        include: {
+          role: {
+            include: {
+              rolePermissions: {
+                include: {
+                  permission: true
+                }
+              }
+            }
+          },
+          userPermissions: {
+            include: {
+              permission: true
+            }
+          }
+        }
+      });
+
+      if (!user) {
+        throw new NotFoundException('Usuario no encontrado');
+      }
+
+      const rolePermissions = user.role.rolePermissions
+        .map((rp) => rp.permission)
+        .sort((a, b) => a.id - b.id);
+      const directPermissions = user.userPermissions
+        .map((up) => up.permission)
+        .sort((a, b) => a.id - b.id);
+
+      const allPermissionsMap = new Map();
+      [...rolePermissions, ...directPermissions].forEach((perm) =>
+        allPermissionsMap.set(perm.id, perm),
+      );
+
+      return Array.from(allPermissionsMap.values());
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(`Error al obtener permisos del usuario`);
+    }
+  }
+
+  async getAllPermissionsByRoleId(roleId: number) {
+    try {
+      const role = await this.prisma.role.findUnique({
+        where: {id: roleId},
+        include: {
+          rolePermissions: {
+            include: {
+              permission: true
+            }
+          }
+        }
+      });
+
+      if (!role) {
+        throw new NotFoundException('Rol no encontrado');
+      }
+
+      return role.rolePermissions.map((rp) => rp.permission);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(`Error al obtener permisos del rol`);
     }
   }
 }

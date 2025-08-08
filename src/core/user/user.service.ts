@@ -1,4 +1,4 @@
-import {BadRequestException, Injectable, InternalServerErrorException, NotFoundException} from '@nestjs/common';
+import {BadRequestException, HttpException, Injectable, InternalServerErrorException, NotFoundException} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import {PrismaService} from 'prisma/prisma.service';
 
@@ -31,6 +31,9 @@ export class UserService {
         },
       });
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException(`Error al crear el usuario`);
     }
   }
@@ -42,13 +45,16 @@ export class UserService {
           id: true,
           email: true,
           name: true,
-          role: true,
+          roleId: true,
           isActive: true,
           createdAt: true,
           updatedAt: true,
         },
       });
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException('Error al obtener usuarios');
     }
   }
@@ -61,7 +67,7 @@ export class UserService {
           id: true,
           email: true,
           name: true,
-          role: true,
+          roleId: true,
           isActive: true,
           createdAt: true,
           updatedAt: true,
@@ -74,6 +80,9 @@ export class UserService {
 
       return user;
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException('Error al buscar usuario');
     }
   }
@@ -100,6 +109,9 @@ export class UserService {
         }
       });
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException('Error al actualizar usuario');
     }
   }
@@ -118,6 +130,9 @@ export class UserService {
         where: {id}
       });
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException('Error al eliminar usuario');
     }
   }
@@ -152,47 +167,10 @@ export class UserService {
         skipDuplicates: true
       });
     } catch (error) {
-      throw new InternalServerErrorException(`Error al asignar permisos al usuario`);
-    }
-  }
-
-  async getAllPermissionsByUserId(userId: number) {
-    try {
-      const user = await this.prisma.user.findUnique({
-        where: {id: userId},
-        include: {
-          role: {
-            include: {
-              rolePermissions: {
-                include: {
-                  permission: true
-                }
-              }
-            }
-          },
-          userPermissions: {
-            include: {
-              permission: true
-            }
-          }
-        }
-      });
-
-      if (!user) {
-        throw new NotFoundException('Usuario no encontrado');
+      if (error instanceof HttpException) {
+        throw error;
       }
-
-      const rolePermissions = user.role.rolePermissions.map((rp) => rp.permission);
-      const directPermissions = user.userPermissions.map((up) => up.permission);
-
-      const allPermissionsMap = new Map();
-      [...rolePermissions, ...directPermissions].forEach((perm) =>
-        allPermissionsMap.set(perm.id, perm),
-      );
-
-      return Array.from(allPermissionsMap.values());
-    } catch (error) {
-      throw new InternalServerErrorException(`Error al obtener permisos del usuario`);
+      throw new InternalServerErrorException(`Error al asignar permisos al usuario`);
     }
   }
 }

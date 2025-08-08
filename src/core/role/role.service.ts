@@ -1,4 +1,4 @@
-import {BadRequestException, Injectable, InternalServerErrorException, NotFoundException} from '@nestjs/common';
+import {BadRequestException, HttpException, Injectable, InternalServerErrorException, NotFoundException} from '@nestjs/common';
 import {PrismaService} from 'prisma/prisma.service';
 
 import {CreateRoleDto} from './dto/create-role.dto';
@@ -26,6 +26,9 @@ export class RoleService {
 				},
 			});
 		} catch (error) {
+			if (error instanceof HttpException) {
+				throw error;
+			}
 			throw new InternalServerErrorException(`Error al crear el rol`);
 		}
 	}
@@ -41,6 +44,9 @@ export class RoleService {
 				},
 			});
 		} catch (error) {
+			if (error instanceof HttpException) {
+				throw error;
+			}
 			throw new InternalServerErrorException(`Error al obtener roles`);
 		}
 	}
@@ -63,6 +69,9 @@ export class RoleService {
 
 			return role;
 		} catch (error) {
+			if (error instanceof HttpException) {
+				throw error;
+			}
 			throw new InternalServerErrorException(`Error al obtener el rol`);
 		}
 	}
@@ -85,6 +94,9 @@ export class RoleService {
 				},
 			});
 		} catch (error) {
+			if (error instanceof HttpException) {
+				throw error;
+			}
 			throw new InternalServerErrorException(`Error al actualizar el rol`);
 		}
 	}
@@ -103,6 +115,9 @@ export class RoleService {
 				where: {id},
 			});
 		} catch (error) {
+			if (error instanceof HttpException) {
+				throw error;
+			}
 			throw new InternalServerErrorException(`Error al eliminar el rol`);
 		}
 	}
@@ -131,6 +146,9 @@ export class RoleService {
 				skipDuplicates: true,
 			});
 		} catch (error) {
+			if (error instanceof HttpException) {
+				throw error;
+			}
 			throw new InternalServerErrorException(`Error al asignar permisos al rol`);
 		}
 	}
