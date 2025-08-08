@@ -35,7 +35,7 @@ export class PermissionsController {
   }
 
   @Delete(':id')
-  @HttpCode(200)
+  @HttpCode(204)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.permissionsService.deletePermission(id);
   }

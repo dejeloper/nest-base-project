@@ -8,8 +8,7 @@ export class AuthController {
 
 	@Post('login')
 	@HttpCode(200)
-	async login(@Body() loginDto: LoginDto) {
+	login(@Body() loginDto: LoginDto) {
 		return this.AuthService.login(loginDto.email, loginDto.password);
 	}
-
 }
