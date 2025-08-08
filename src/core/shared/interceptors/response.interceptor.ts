@@ -11,12 +11,18 @@ export class ResponseInterceptor implements NestInterceptor {
 		const statusCode = response.statusCode ?? 200;
 
 		return next.handle().pipe(
-			map((data) => ({
-				code: statusCode,
-				error: false,
-				message: 'Consulta Exitosa',
-				values: data,
-			})),
+			map((data) => {
+				const hasCustomMessage = data && typeof data === 'object' && 'message' in data;
+				const message = hasCustomMessage ? data.message : 'Ok';
+				const values = hasCustomMessage && Object.keys(data).length === 1 ? {} : data;
+
+				return {
+					code: statusCode,
+					success: true,
+					message,
+					values,
+				};
+			}),
 		);
 	}
 }
