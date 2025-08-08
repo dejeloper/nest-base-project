@@ -1,7 +1,11 @@
 import {NestFactory} from '@nestjs/core';
-import {AppModule} from './app.module';
 import {ValidationPipe} from '@nestjs/common';
 import {Response} from 'express';
+
+import {AppModule} from '@/app.module';
+import {ResponseInterceptor} from '@/shared/interceptors/response.interceptor';
+import {HttpErrorFilter} from '@/shared/filters/http-exception.filter';
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -25,6 +29,9 @@ async function bootstrap() {
   app.getHttpAdapter().get('/', (req, res: Response) => {
     res.redirect('/api');
   });
+
+  app.useGlobalInterceptors(new ResponseInterceptor());
+  app.useGlobalFilters(new HttpErrorFilter());
 
   await app.listen(process.env.PORT ?? 3000);
 }

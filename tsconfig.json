@@ -11,9 +11,11 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
+      "@/*": ["src/*"],
       "@/core/*": ["src/core/*"],
       "@/auth/*": ["src/core/auth/*"],
       "@/user/*": ["src/core/user/*"],
+      "@/shared/*": ["src/core/shared/*"],
       "@/app/*": ["src/app/*"]
     },
     "incremental": true,
