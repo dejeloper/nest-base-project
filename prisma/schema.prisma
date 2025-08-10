@@ -22,6 +22,7 @@ model User {
   roleId          Int
   role            Role             @relation(fields: [roleId], references: [id])
   userPermissions UserPermission[]
+  sessions        Session[]
   schedules       UserSchedule[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
@@ -78,6 +79,18 @@ model UserPermission {
   @@map("user_permission")
 }
 
+model Session {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id])
+  startTime DateTime  @default(now())
+  endTime   DateTime?
+  ipAddress String?
+  device    String?
+
+  @@map("session")
+}
+
 model UserSchedule {
   id        Int      @id @default(autoincrement())
   userId    Int
@@ -89,4 +102,15 @@ model UserSchedule {
   updatedAt DateTime @updatedAt
 
   @@map("user_schedule")
+}
+
+model Parameter {
+  id          Int      @id @default(autoincrement())
+  key         String   @unique
+  value       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("parameter")
 }
