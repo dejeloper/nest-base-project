@@ -1,11 +1,10 @@
-import {NestFactory} from '@nestjs/core';
-import {ValidationPipe} from '@nestjs/common';
-import {Response} from 'express';
+import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
+import { Response } from 'express';
 
-import {AppModule} from '@/app.module';
-import {ResponseInterceptor} from '@/shared/interceptors/response.interceptor';
-import {HttpErrorFilter} from '@/shared/filters/http-exception.filter';
-
+import { AppModule } from '@/app.module';
+import { ResponseInterceptor } from '@/shared/interceptors/response.interceptor';
+import { HttpErrorFilter } from '@/shared/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -23,7 +22,7 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
-    })
+    }),
   );
 
   app.getHttpAdapter().get('/', (req, res: Response) => {

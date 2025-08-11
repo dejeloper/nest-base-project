@@ -1,16 +1,27 @@
-import {Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpCode} from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  ParseIntPipe,
+  HttpCode,
+} from '@nestjs/common';
 
-import {UserService} from './user.service';
-import {CreateUserDto} from './dto/create-user.dto';
-import {UpdateUserDto} from './dto/update-user.dto';
-import {AssignPermissionsDto} from './dto/assign-permissions.dto';
+import { UserService } from './user.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { AssignPermissionsDto } from './dto/assign-permissions.dto';
 
-import {JwtAuthGuard} from '@/auth/jwt/jwt-auth.guard';
+import { JwtAuthGuard } from '@/auth/jwt/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('core/user')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
   @Post()
   @HttpCode(201)
@@ -32,7 +43,10 @@ export class UserController {
 
   @Patch(':id')
   @HttpCode(200)
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto,) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
     return this.userService.updateUser(id, updateUserDto);
   }
 

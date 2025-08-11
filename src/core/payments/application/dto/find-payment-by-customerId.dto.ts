@@ -1,3 +1,3 @@
 export interface FindPaymentByCustomerIdDto {
-	customerId: string;
+  customerId: string;
 }

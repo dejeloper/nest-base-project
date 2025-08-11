@@ -1,17 +1,23 @@
-import {BadRequestException, Injectable, InternalServerErrorException, NotFoundException, HttpException} from '@nestjs/common';
-import {PrismaService} from 'prisma/prisma.service';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  HttpException,
+} from '@nestjs/common';
+import { PrismaService } from 'prisma/prisma.service';
 
-import {CreatePermissionDto} from './dto/create-permission.dto';
-import {UpdatePermissionDto} from './dto/update-permission.dto';
+import { CreatePermissionDto } from './dto/create-permission.dto';
+import { UpdatePermissionDto } from './dto/update-permission.dto';
 
 @Injectable()
 export class PermissionsService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async createPermission(data: CreatePermissionDto) {
     try {
       const existingPermission = await this.prisma.permission.findUnique({
-        where: {name: data.name},
+        where: { name: data.name },
       });
 
       if (existingPermission) {
@@ -37,8 +43,7 @@ export class PermissionsService {
   async findAllPermissions() {
     try {
       return await this.prisma.permission.findMany({
-
-        orderBy: {createdAt: 'desc'},
+        orderBy: { createdAt: 'desc' },
       });
     } catch (error) {
       if (error instanceof HttpException) {
@@ -51,7 +56,7 @@ export class PermissionsService {
   async findPermissionById(id: number) {
     try {
       const permission = await this.prisma.permission.findUnique({
-        where: {id},
+        where: { id },
         select: {
           id: true,
           name: true,
@@ -77,7 +82,7 @@ export class PermissionsService {
   async updatePermission(id: number, data: UpdatePermissionDto) {
     try {
       const existingPermission = await this.prisma.permission.findUnique({
-        where: {id},
+        where: { id },
       });
 
       if (!existingPermission) {
@@ -85,7 +90,7 @@ export class PermissionsService {
       }
 
       return await this.prisma.permission.update({
-        where: {id},
+        where: { id },
         data: {
           ...data,
           updatedAt: new Date(),
@@ -102,7 +107,7 @@ export class PermissionsService {
   async deletePermission(id: number) {
     try {
       const existingPermission = await this.prisma.permission.findUnique({
-        where: {id},
+        where: { id },
       });
 
       if (!existingPermission) {
@@ -110,7 +115,7 @@ export class PermissionsService {
       }
 
       return await this.prisma.permission.delete({
-        where: {id},
+        where: { id },
       });
     } catch (error) {
       if (error instanceof HttpException) {
@@ -123,23 +128,23 @@ export class PermissionsService {
   async getAllPermissionsByUserId(userId: number) {
     try {
       const user = await this.prisma.user.findUnique({
-        where: {id: userId},
+        where: { id: userId },
         include: {
           role: {
             include: {
               rolePermissions: {
                 include: {
-                  permission: true
-                }
-              }
-            }
+                  permission: true,
+                },
+              },
+            },
           },
           userPermissions: {
             include: {
-              permission: true
-            }
-          }
-        }
+              permission: true,
+            },
+          },
+        },
       });
 
       if (!user) {
@@ -163,21 +168,23 @@ export class PermissionsService {
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new InternalServerErrorException(`Error al obtener permisos del usuario`);
+      throw new InternalServerErrorException(
+        `Error al obtener permisos del usuario`,
+      );
     }
   }
 
   async getAllPermissionsByRoleId(roleId: number) {
     try {
       const role = await this.prisma.role.findUnique({
-        where: {id: roleId},
+        where: { id: roleId },
         include: {
           rolePermissions: {
             include: {
-              permission: true
-            }
-          }
-        }
+              permission: true,
+            },
+          },
+        },
       });
 
       if (!role) {
@@ -189,7 +196,9 @@ export class PermissionsService {
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new InternalServerErrorException(`Error al obtener permisos del rol`);
+      throw new InternalServerErrorException(
+        `Error al obtener permisos del rol`,
+      );
     }
   }
 }

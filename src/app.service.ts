@@ -1,6 +1,5 @@
-
-import {Injectable, InternalServerErrorException} from '@nestjs/common';
-import {PrismaClient} from '@prisma/client';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class AppService {
@@ -11,7 +10,9 @@ export class AppService {
       await this.prisma.$queryRaw`SELECT 1`;
       return 'La API está funcionando correctamente';
     } catch (error) {
-      throw new InternalServerErrorException('No se pudo completar la operación. Contacte al administrador del sistema.');
+      throw new InternalServerErrorException(
+        'No se pudo completar la operación. Contacte al administrador del sistema.',
+      );
     }
   }
 }

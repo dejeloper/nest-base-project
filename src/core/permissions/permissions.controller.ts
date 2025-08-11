@@ -1,14 +1,25 @@
-import {Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpCode} from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  ParseIntPipe,
+  HttpCode,
+} from '@nestjs/common';
 
-import {PermissionsService} from './permissions.service';
-import {CreatePermissionDto} from './dto/create-permission.dto';
-import {UpdatePermissionDto} from './dto/update-permission.dto';
-import {JwtAuthGuard} from '@/auth/jwt/jwt-auth.guard';
+import { PermissionsService } from './permissions.service';
+import { CreatePermissionDto } from './dto/create-permission.dto';
+import { UpdatePermissionDto } from './dto/update-permission.dto';
+import { JwtAuthGuard } from '@/auth/jwt/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('core/permissions')
 export class PermissionsController {
-  constructor(private readonly permissionsService: PermissionsService) { }
+  constructor(private readonly permissionsService: PermissionsService) {}
 
   @Post()
   @HttpCode(201)
@@ -30,7 +41,10 @@ export class PermissionsController {
 
   @Patch(':id')
   @HttpCode(200)
-  update(@Param('id', ParseIntPipe) id: number, @Body() updatePermissionDto: UpdatePermissionDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updatePermissionDto: UpdatePermissionDto,
+  ) {
     return this.permissionsService.updatePermission(id, updatePermissionDto);
   }
 

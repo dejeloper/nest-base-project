@@ -1,14 +1,25 @@
-import {Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, HttpCode} from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  ParseIntPipe,
+  HttpCode,
+} from '@nestjs/common';
 
-import {UserScheduleService} from './user-schedule.service';
-import {CreateUserScheduleDto} from './dto/create-user-schedule.dto';
-import {UpdateUserScheduleDto} from './dto/update-user-schedule.dto';
-import {JwtAuthGuard} from '@/auth/jwt/jwt-auth.guard';
+import { UserScheduleService } from './user-schedule.service';
+import { CreateUserScheduleDto } from './dto/create-user-schedule.dto';
+import { UpdateUserScheduleDto } from './dto/update-user-schedule.dto';
+import { JwtAuthGuard } from '@/auth/jwt/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('core/user-schedule')
 export class UserScheduleController {
-  constructor(private readonly userScheduleService: UserScheduleService) { }
+  constructor(private readonly userScheduleService: UserScheduleService) {}
 
   @Post()
   @HttpCode(201)
@@ -30,8 +41,14 @@ export class UserScheduleController {
 
   @Patch(':id')
   @HttpCode(200)
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateUserScheduleDto: UpdateUserScheduleDto) {
-    return this.userScheduleService.updateUserSchedule(id, updateUserScheduleDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserScheduleDto: UpdateUserScheduleDto,
+  ) {
+    return this.userScheduleService.updateUserSchedule(
+      id,
+      updateUserScheduleDto,
+    );
   }
 
   @Delete(':id')

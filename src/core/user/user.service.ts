@@ -1,17 +1,21 @@
-import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import {PrismaService} from 'prisma/prisma.service';
+import { PrismaService } from 'prisma/prisma.service';
 
-import {CreateUserDto} from './dto/create-user.dto';
-import {UpdateUserDto} from './dto/update-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async createUser(data: CreateUserDto) {
     const existingUser = await this.prisma.user.findUnique({
-      where: {email: data.email},
+      where: { email: data.email },
     });
 
     if (existingUser) {
@@ -47,7 +51,7 @@ export class UserService {
 
   async findUserById(id: number) {
     const user = await this.prisma.user.findUnique({
-      where: {id},
+      where: { id },
       select: {
         id: true,
         email: true,
@@ -68,7 +72,7 @@ export class UserService {
 
   async updateUser(id: number, data: UpdateUserDto) {
     const existingUser = await this.prisma.user.findUnique({
-      where: {id},
+      where: { id },
     });
 
     if (!existingUser) {
@@ -80,7 +84,7 @@ export class UserService {
     }
 
     return this.prisma.user.update({
-      where: {id},
+      where: { id },
       data: {
         ...data,
         updatedAt: new Date(),
@@ -90,7 +94,7 @@ export class UserService {
 
   async deleteUser(id: number) {
     const existingUser = await this.prisma.user.findUnique({
-      where: {id},
+      where: { id },
     });
 
     if (!existingUser) {
@@ -98,15 +102,15 @@ export class UserService {
     }
 
     await this.prisma.user.delete({
-      where: {id},
+      where: { id },
     });
 
-    return {message: 'Usuario eliminado correctamente'};
+    return { message: 'Usuario eliminado correctamente' };
   }
 
   async assignPermissionToUser(userId: number, permissionId: number[]) {
     const user = await this.prisma.user.findUnique({
-      where: {id: userId},
+      where: { id: userId },
     });
 
     if (!user) {
@@ -115,7 +119,7 @@ export class UserService {
 
     const permissions = await this.prisma.permission.findMany({
       where: {
-        id: {in: permissionId},
+        id: { in: permissionId },
       },
     });
 

@@ -1,9 +1,9 @@
-import {IsArray, IsInt, ArrayNotEmpty, ArrayUnique} from 'class-validator';
+import { IsArray, IsInt, ArrayNotEmpty, ArrayUnique } from 'class-validator';
 
 export class AssignPermissionsDto {
-	@IsArray()
-	@ArrayNotEmpty()
-	@ArrayUnique()
-	@IsInt({each: true})
-	permissionIds: number[];
+  @IsArray()
+  @ArrayNotEmpty()
+  @ArrayUnique()
+  @IsInt({ each: true })
+  permissionIds: number[];
 }

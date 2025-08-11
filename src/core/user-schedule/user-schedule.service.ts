@@ -1,20 +1,23 @@
-import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
-import {PrismaService} from 'prisma/prisma.service';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { PrismaService } from 'prisma/prisma.service';
 
-import {CreateUserScheduleDto} from './dto/create-user-schedule.dto';
-import {UpdateUserScheduleDto} from './dto/update-user-schedule.dto';
+import { CreateUserScheduleDto } from './dto/create-user-schedule.dto';
+import { UpdateUserScheduleDto } from './dto/update-user-schedule.dto';
 
 @Injectable()
 export class UserScheduleService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async createUserSchedule(data: CreateUserScheduleDto) {
     const existingSchedule = await this.prisma.userSchedule.findFirst({
-      where: {userId: data.userId, dayOfWeek: data.dayOfWeek},
+      where: { userId: data.userId, dayOfWeek: data.dayOfWeek },
     });
 
     if (existingSchedule) {
-      throw new HttpException('El horario para este usuario ya está registrado', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'El horario para este usuario ya está registrado',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const validationError = this.validateScheduleInput(data);
@@ -23,7 +26,7 @@ export class UserScheduleService {
     }
 
     return this.prisma.userSchedule.create({
-      data
+      data,
     });
   }
 
@@ -50,7 +53,7 @@ export class UserScheduleService {
 
   async findOne(id: number) {
     const schedule = await this.prisma.userSchedule.findUnique({
-      where: {id},
+      where: { id },
       select: {
         id: true,
         user: {
@@ -75,11 +78,14 @@ export class UserScheduleService {
 
   async updateUserSchedule(id: number, data: UpdateUserScheduleDto) {
     const existingSchedule = await this.prisma.userSchedule.findUnique({
-      where: {id: id},
+      where: { id: id },
     });
 
     if (!existingSchedule) {
-      throw new HttpException('No se encontró un horario existente para actualizar', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        'No se encontró un horario existente para actualizar',
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const validationError = this.validateScheduleInput(data, true);
@@ -88,14 +94,14 @@ export class UserScheduleService {
     }
 
     return this.prisma.userSchedule.update({
-      where: {id},
-      data
+      where: { id },
+      data,
     });
   }
 
   async removeSchedule(id: number) {
     const existingSchedule = await this.prisma.userSchedule.findUnique({
-      where: {id},
+      where: { id },
     });
 
     if (!existingSchedule) {
@@ -106,13 +112,16 @@ export class UserScheduleService {
     }
 
     await this.prisma.userSchedule.delete({
-      where: {id},
+      where: { id },
     });
 
-    return {message: 'Horario eliminado correctamente'};
+    return { message: 'Horario eliminado correctamente' };
   }
 
-  private validateScheduleInput(data: CreateUserScheduleDto | UpdateUserScheduleDto, isUpdate = false): string | undefined {
+  private validateScheduleInput(
+    data: CreateUserScheduleDto | UpdateUserScheduleDto,
+    isUpdate = false,
+  ): string | undefined {
     if (!isUpdate && !data.userId) {
       return 'El ID de usuario es obligatorio';
     }
@@ -122,14 +131,20 @@ export class UserScheduleService {
     }
 
     if (data.startTime && data.endTime) {
-      const timeValidation = this.validateTimeSchedule(data.startTime, data.endTime);
+      const timeValidation = this.validateTimeSchedule(
+        data.startTime,
+        data.endTime,
+      );
       if (timeValidation) {
         return timeValidation;
       }
     }
   }
 
-  private validateTimeSchedule(startTime: string, endTime: string): string | undefined {
+  private validateTimeSchedule(
+    startTime: string,
+    endTime: string,
+  ): string | undefined {
     const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
     if (!timeRegex.test(startTime)) {
@@ -160,7 +175,7 @@ export class UserScheduleService {
       hoursMin: 6,
       minutesMin: 0,
       hoursMax: 21,
-      minutesMax: 0
+      minutesMax: 0,
     };
 
     const minTime = new Date(now);
@@ -170,9 +185,11 @@ export class UserScheduleService {
     maxTime.setHours(limitTime.hoursMax, limitTime.minutesMax, 0, 0);
 
     if (startDate < minTime || endDate > maxTime) {
-      return `Las horas deben estar dentro del horario permitido (${limitTime.hoursMin
-        }:${String(limitTime.minutesMin).padStart(2, '0')} - ${limitTime.hoursMax
-        }:${String(limitTime.minutesMax).padStart(2, '0')})`;
+      return `Las horas deben estar dentro del horario permitido (${
+        limitTime.hoursMin
+      }:${String(limitTime.minutesMin).padStart(2, '0')} - ${
+        limitTime.hoursMax
+      }:${String(limitTime.minutesMax).padStart(2, '0')})`;
     }
 
     const durationMs = endDate.getTime() - startDate.getTime();

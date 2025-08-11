@@ -1,17 +1,17 @@
-import {IsInt, IsString, IsNotEmpty} from 'class-validator';
+import { IsInt, IsString, IsNotEmpty } from 'class-validator';
 
 export class CreateUserScheduleDto {
-	@IsInt()
-	userId: number;
+  @IsInt()
+  userId: number;
 
-	@IsInt()
-	dayOfWeek: number;
+  @IsInt()
+  dayOfWeek: number;
 
-	@IsString()
-	@IsNotEmpty()
-	startTime: string;
+  @IsString()
+  @IsNotEmpty()
+  startTime: string;
 
-	@IsString()
-	@IsNotEmpty()
-	endTime: string;
+  @IsString()
+  @IsNotEmpty()
+  endTime: string;
 }
