@@ -13,7 +13,19 @@ export class ResponseInterceptor implements NestInterceptor {
 		return next.handle().pipe(
 			map((data) => {
 				const hasCustomMessage = data && typeof data === 'object' && 'message' in data;
-				const message = hasCustomMessage ? data.message : 'Ok';
+				let message = hasCustomMessage ? data.message : 'Ok';
+
+				if (
+					data &&
+					typeof data === 'object' &&
+					Object.values(data).some(
+						(value) => Array.isArray(value) && value.length === 0
+					) &&
+					!hasCustomMessage
+				) {
+					message = 'No se encontraron registros';
+				}
+
 				const values = hasCustomMessage && Object.keys(data).length === 1 ? {} : data;
 
 				return {
