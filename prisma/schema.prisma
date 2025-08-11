@@ -114,3 +114,13 @@ model Parameter {
 
   @@map("parameter")
 }
+
+model Payment {
+  id         String   @id @default(uuid())
+  amount     Float
+  customerId String   @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("payment")
+}
